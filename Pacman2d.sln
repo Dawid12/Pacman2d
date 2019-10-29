@@ -1,0 +1,23 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29411.108
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "Pacman2d", "Pacman2d.pyproj", "{FD55AD81-6EFE-4824-8B48-FDFC0D4AEB40}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FD55AD81-6EFE-4824-8B48-FDFC0D4AEB40}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FD55AD81-6EFE-4824-8B48-FDFC0D4AEB40}.Release|Any CPU.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {355D26FF-F38A-41DD-85C8-2C39519C3006}
+	EndGlobalSection
+EndGlobal
