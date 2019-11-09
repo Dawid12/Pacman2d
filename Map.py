@@ -4,6 +4,7 @@ from Ghost import Ghost
 from Pacman import Pacman
 class Map:
     def __init__(self, path):
+        self.font = pygame.font.SysFont('Comic Sans MS', 30)
         self.mapPath = path
         self.elementWidth = 20
         self.elementHeight = 20
@@ -104,3 +105,20 @@ class Map:
     def moveGhosts(self, pacmanPosition, PacmanState):
         for ghost in self.ghosts:
             ghost.makeMove()
+    def checkVictoryCondition(self):
+        if len(self.coins) <= 0:
+            return True
+        return False
+    def drawVicoryScreen(self, screen):
+        text = self.font.render("Victory!", False, (231, 254, 0))
+        return screen.blit(text, (220,360))
+    def reset(self):
+        self.walls = []
+        self.coins = []
+        self.passages = []
+        self.doors = []
+        self.teleports = []
+        self.scares = []
+        self.ghosts = []
+        self.getMap()
+        return

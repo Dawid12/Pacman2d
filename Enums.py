@@ -28,5 +28,6 @@ class GhostState(Enum):
 class MouthState(Enum):
     Open = 1
     Close = 2
+    ClosedForever = 3
 class Moves(Enum):
     Right = (3, 0)

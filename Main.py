@@ -2,6 +2,7 @@ import pygame
 from Pacman import Pacman
 from Map import Map
 from Move import Move
+import time
 pygame.init()
 pygame.font.init()
 (screenWidth, screenHeight) = ((560, 720))
@@ -31,8 +32,21 @@ while running:
     screen.fill((0,0,0))
     map.draw(screen, pacman.getPacmanState())
     pacman.draw(screen)
+    if map.checkVictoryCondition():
+        map.drawVicoryScreen(screen);
+        pygame.display.flip()
+        time.sleep(10)
+        clock.tick(120)
+        map.reset()
+        pacman.reset()
+        pacman.draw(screen)
+        map.draw(screen, pacman.getPacmanState())
+        continue
+    if pacman.isDead():
+        running = pacman.handleDeath(screen, clock)
     pygame.display.flip()
     clock.tick(120)
+
 
     #pacman todo
     # - jedzenie owocow
