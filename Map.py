@@ -104,7 +104,24 @@ class Map:
         return
     def moveGhosts(self, pacmanPosition, PacmanState):
         for ghost in self.ghosts:
-            ghost.makeMove()
+            if ghost.type == Enums.MapElement.GhostRed:
+                if PacmanState == Enums.PacmanState.Normal:
+                    ghost.moveInDirection(ghost.getDirectionTowardsPacman(pacmanPosition), self.getWalls(), self.getTeleports())
+            # czerwony duch poruszas się w kierunku gracza zawsze niezależnie od tego gdzie jest gracz
+            elif ghost.type == Enums.MapElement.GhostBlue:
+                if PacmanState == Enums.PacmanState.Normal:
+                    if ghost.isPacmanNear(pacmanPosition) == True:
+                        ghost.moveInDirection(ghost.getDirectionTowardsPacman(pacmanPosition), self.getWalls(), self.getTeleports())
+                    else:
+                        ghost.makeRandomMove(None, self.getWalls(), self.getTeleports())
+            # niebieski duch porusza się w kierunku gracza, kiedy ten jest odpowienio blisko, w przeciwnym razie wykonuje losowe ruchy
+            elif ghost.type == Enums.MapElement.GhostPink:
+                if PacmanState == Enums.PacmanState.Normal:
+                    ghost.makeRandomMove(None, self.getWalls(), self.getTeleports())
+            elif ghost.type == Enums.MapElement.GhostOrange:
+                if PacmanState == Enums.PacmanState.Normal:
+                    ghost.makeRandomMove(None, self.getWalls(), self.getTeleports())
+            #ghost.makeMove()
     def checkVictoryCondition(self):
         if len(self.coins) <= 0:
             return True

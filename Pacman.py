@@ -45,13 +45,17 @@ class Pacman(Character):
         self.previousMove = Move(0, 0)
         self.death = False
         return
+
     def getSurface(self):
         self.surface = self.imagesDict[self.mouthState][self.direction]
         return self.surface
+
     def getDirection(self):
         return self.direction
+
     def getPosition(self):
         return (self.x, self.y)
+
     def move(self, move, walls, teleports, coins, scares, ghosts):
         if self.canMove(move, pygame.Rect((self.x, self.y), (18,18)), walls):
             teleport = self.recognizeTeleport(move, pygame.Rect((self.x, self.y), (18,18)), teleports)
@@ -75,6 +79,7 @@ class Pacman(Character):
         self.checkForGhosts(ghosts)
         self.handleMouth()
         return
+
     def makeMove(self, move, direction):
         self.previousMove = move
         self.x += move.x
@@ -91,6 +96,7 @@ class Pacman(Character):
         else:
             self.direction = direction
         return
+
     def checkForCoins(self, coins):
         actualRect = pygame.Rect((self.x, self.y), (18,18))
         for coin in coins:
@@ -107,6 +113,7 @@ class Pacman(Character):
                 self.pacmanState = Enums.PacmanState.OnSteroids
                 self.movesToNormal = 900
         return
+
     def checkForGhosts(self, ghosts):
         actualRect = pygame.Rect((self.x, self.y), (18,18))
         for ghost in ghosts:
@@ -114,9 +121,11 @@ class Pacman(Character):
                 if self.pacmanState == Enums.PacmanState.Normal:
                     self.death = True
                 elif self.pacmanState == Enums.PacmanState.OnSteroids:
-                    self.points += 100
-                    ghost.setState(Enums.GhostState.Eaten)
+                    if ghost.getState() == Enums.GhostState.Frightened:
+                        self.points += 100
+                        ghost.setState(Enums.GhostState.Eaten)
         return
+
     def handleMouth(self):
         if self.mouthState == Enums.MouthState.Close:
             self.mouthState = Enums.MouthState.Open
@@ -128,14 +137,19 @@ class Pacman(Character):
         screen.blit(self.getLifesSurface(), (200,0))
         screen.blit(self.getCoordSurface(), (0, 670))
         return
+
     def getPointsSurface(self):
         return self.font.render('Points: ' + str(self.points), False, (255, 0, 0))
+
     def getLifesSurface(self):
         return self.font.render('Lifes: ' + str(self.lifes), False, (255, 0, 0))
+
     def getCoordSurface(self):
         return self.font.render('X: ' + str(self.x) + ', Y: ' + str(self.y), False, (255, 150, 0))
+
     def getPacmanState(self):
         return self.pacmanState
+
     def reset(self):
         self.direction = Enums.Direction.Down
         self.mouthState = Enums.MouthState.Close
@@ -145,23 +159,26 @@ class Pacman(Character):
         self.y = 150
         self.previousMove = Move(0, 0)
         return
+
     def isDead(self):
         return self.death
-    def pacmanDeath(self, screen, clock):
+
+    def pacmanDeath(self, screen):
         for death in self.imagesDict[Enums.MouthState.ClosedForever]:
             image = self.imagesDict[Enums.MouthState.ClosedForever][death]
             screen.blit(image, self.getPosition())
             pygame.display.flip()
-            clock.tick(120)
             time.sleep(0.2)
+
     def gameOver(self, screen):
         text = self.font.render("Game Over!", False, (231, 254, 0))
-        screen.blit(text, (220,360))
+        screen.blit(text, (200,360))
         pygame.display.flip()
         time.sleep(2)
-    def handleDeath(self, screen, clock):
+
+    def handleDeath(self, screen):
         self.death = False
-        self.pacmanDeath(screen, clock)
+        self.pacmanDeath(screen)
         self.reset()
         if self.lifes == 0:
             self.gameOver(screen)
