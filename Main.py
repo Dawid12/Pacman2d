@@ -29,8 +29,8 @@ while running:
         pacmanMove = Move.initWithDirection(Enums.Direction.Left)
     elif pressed[pygame.K_RIGHT]:
         pacmanMove = Move.initWithDirection(Enums.Direction.Right)
-
-    pacman.move(pacmanMove, map.getWalls(), map.getTeleports(), map.getCoins(), map.getScares(), map.getGhosts())
+    map.spawnFruit(pacman.getPoints(), pacman.getLevel())
+    pacman.move(pacmanMove, map.getWalls(), map.getTeleports(), map.getCoins(), map.getScares(), map.getGhosts(), map.getFruits())
     map.moveGhosts(pacman.getPosition(), pacman.getPacmanState())
     screen.fill((0,0,0))
     map.draw(screen, pacman.getPacmanState())
@@ -53,4 +53,3 @@ while running:
 
     #pacman todo
     # - jedzenie owocow
-    # - ruchy duchow

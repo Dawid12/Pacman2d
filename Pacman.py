@@ -11,6 +11,7 @@ class Pacman(Character):
         self.movesToNormal = 0
         self.x = 220
         self.y = 150
+        self.level = 1
         self.imagesDict = {
             Enums.MouthState.Close: {
                     Enums.Direction.Down: pygame.image.load('data\\pl_down_2.png'),
@@ -46,6 +47,12 @@ class Pacman(Character):
         self.death = False
         return
 
+    def getPoints(self):
+        return self.points
+
+    def getLevel(self):
+        return self.level
+
     def getSurface(self):
         self.surface = self.imagesDict[self.mouthState][self.direction]
         return self.surface
@@ -56,7 +63,7 @@ class Pacman(Character):
     def getPosition(self):
         return (self.x, self.y)
 
-    def move(self, move, walls, teleports, coins, scares, ghosts):
+    def move(self, move, walls, teleports, coins, scares, ghosts, fruits):
         if self.canMove(move, pygame.Rect((self.x, self.y), (18,18)), walls):
             teleport = self.recognizeTeleport(move, pygame.Rect((self.x, self.y), (18,18)), teleports)
             if teleport != None:
@@ -75,6 +82,7 @@ class Pacman(Character):
                 self.pacmanState = Enums.PacmanState.Normal
                 self.movesToNormal = 0
         self.checkForCoins(coins)
+        self.checkForFruits(fruits)
         self.checkForScares(scares)
         self.checkForGhosts(ghosts)
         self.handleMouth()
@@ -105,13 +113,21 @@ class Pacman(Character):
                 self.points += 1
                 break
         return
+    def checkForFruits(self, fruits):
+        actualRect = pygame.Rect((self.x, self.y), (18,18))
+        for fruit in fruits:
+            if fruit.colliderect(actualRect):
+                fruits.remove(fruit)
+                self.points += 1000
+                break
+        return
     def checkForScares(self, scares):
         actualRect = pygame.Rect((self.x, self.y), (18,18))
         for scare in scares:
             if scare.colliderect(actualRect):
                 scares.remove(scare)
                 self.pacmanState = Enums.PacmanState.OnSteroids
-                self.movesToNormal = 900
+                self.movesToNormal = 700
         return
 
     def checkForGhosts(self, ghosts):
@@ -158,6 +174,7 @@ class Pacman(Character):
         self.x = 220
         self.y = 150
         self.previousMove = Move(0, 0)
+        self.level += 1
         return
 
     def isDead(self):

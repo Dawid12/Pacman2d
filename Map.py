@@ -4,10 +4,12 @@ from Ghost import Ghost
 from Pacman import Pacman
 class Map:
     def __init__(self, path):
+        self.fruitSpawned = False
         self.font = pygame.font.SysFont('Comic Sans MS', 30)
         self.mapPath = path
         self.elementWidth = 20
         self.elementHeight = 20
+        self.fruits = []
         self.walls = []
         self.coins = []
         self.passages = []
@@ -27,6 +29,7 @@ class Map:
             Enums.MapElement.GhostOrange: pygame.image.load('data\\orange.png'),
             Enums.MapElement.Frightened: pygame.image.load('data\\frightened.png'),
             Enums.MapElement.Eaten: pygame.image.load('data\\eaten.png'),
+            Enums.MapElement.Fruit: pygame.image.load('data\\fruit.png')
         }
         return
     def getMap(self):
@@ -67,6 +70,9 @@ class Map:
     def drawCoins(self, screen):
         for coin in self.coins:
             screen.blit(self.imagesDict[Enums.MapElement.Coin], (coin.left, coin.top))
+    def drawFruits(self, screen):
+        for fruit in self.fruits:
+            screen.blit(self.imagesDict[Enums.MapElement.Fruit], (fruit.left, fruit.top))
     def drawDoors(self, screen):
         for door in self.doors:
             screen.blit(self.imagesDict[Enums.MapElement.Door], (door.left, door.top))
@@ -89,6 +95,8 @@ class Map:
         return self.teleports
     def getCoins(self):
         return self.coins
+    def getFruits(self):
+        return self.fruits
     def getScares(self):
         return self.scares
     def getGhosts(self):
@@ -97,6 +105,7 @@ class Map:
         self.drawWalls(screen)
         self.drawPassages(screen)
         self.drawCoins(screen)
+        self.drawFruits(screen)
         self.drawDoors(screen)
         self.drawTeleports(screen)
         self.drawScares(screen)
@@ -105,22 +114,36 @@ class Map:
     def moveGhosts(self, pacmanPosition, PacmanState):
         for ghost in self.ghosts:
             if ghost.type == Enums.MapElement.GhostRed:
+                # czerwony duch poruszas się w kierunku gracza zawsze niezależnie od tego gdzie jest gracz
                 if PacmanState == Enums.PacmanState.Normal:
                     ghost.moveInDirection(ghost.getDirectionTowardsPacman(pacmanPosition), self.getWalls(), self.getTeleports())
-            # czerwony duch poruszas się w kierunku gracza zawsze niezależnie od tego gdzie jest gracz
+            
             elif ghost.type == Enums.MapElement.GhostBlue:
+                # niebieski duch porusza się w kierunku gracza, kiedy ten jest odpowienio blisko, w przeciwnym razie wykonuje losowe ruchy
                 if PacmanState == Enums.PacmanState.Normal:
                     if ghost.isPacmanNear(pacmanPosition) == True:
                         ghost.moveInDirection(ghost.getDirectionTowardsPacman(pacmanPosition), self.getWalls(), self.getTeleports())
                     else:
                         ghost.makeRandomMove(None, self.getWalls(), self.getTeleports())
-            # niebieski duch porusza się w kierunku gracza, kiedy ten jest odpowienio blisko, w przeciwnym razie wykonuje losowe ruchy
+            
             elif ghost.type == Enums.MapElement.GhostPink:
+                # różowy duch idzie w kierunku gracza jeżeli ten nie jest w jego pobliżu
                 if PacmanState == Enums.PacmanState.Normal:
-                    ghost.makeRandomMove(None, self.getWalls(), self.getTeleports())
+                    if ghost.isPacmanNear(pacmanPosition) == True:
+                        ghost.makeRandomMove(None, self.getWalls(), self.getTeleports())
+                    else:
+                        ghost.moveInDirection(ghost.getDirectionTowardsPacman(pacmanPosition), self.getWalls(), self.getTeleports())
+            
             elif ghost.type == Enums.MapElement.GhostOrange:
+                #pomarańczowy duch goni gracza jeżeli nie znajduje się w jego pobliżu, jeżeli gracz jest blisko pomarańczowy ucieka
                 if PacmanState == Enums.PacmanState.Normal:
-                    ghost.makeRandomMove(None, self.getWalls(), self.getTeleports())
+                    if ghost.isPacmanNear(pacmanPosition) == True:
+                        ghost.moveInDirection(ghost.getDirectionOppositePacman(pacmanPosition), self.getWalls(), self.getTeleports())
+                    else:
+                        ghost.moveInDirection(ghost.getDirectionTowardsPacman(pacmanPosition), self.getWalls(), self.getTeleports())
+
+            if PacmanState == Enums.PacmanState.OnSteroids:
+                ghost.moveInDirection(ghost.getDirectionOppositePacman(pacmanPosition), self.getWalls(), self.getTeleports())
             #ghost.makeMove()
     def checkVictoryCondition(self):
         if len(self.coins) <= 0:
@@ -129,9 +152,20 @@ class Map:
     def drawVicoryScreen(self, screen):
         text = self.font.render("Victory!", False, (231, 254, 0))
         return screen.blit(text, (220,360))
+    def spawnFruit(self, points, level):
+        if points/level > 70 and self.fruitSpawned == False:
+            index = (int)(len(self.passages) / 2)
+            width = self.passages[index].width
+            height = self.passages[index].height
+            x = self.passages[index].x
+            y = self.passages[index].y
+            self.fruits.append(pygame.Rect((x, y), (width, height)))
+            self.fruitSpawned = True
     def reset(self):
+        self.fruitSpawned = False
         self.walls = []
         self.coins = []
+        self.fruirs = []
         self.passages = []
         self.doors = []
         self.teleports = []

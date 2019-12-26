@@ -12,7 +12,7 @@ class Ghost(Character):
         self.x = x
         self.y = y
         self.state = Enums.GhostState.Normal
-        self.pacmanFindingThreshold = 200
+        self.pacmanFindingThreshold = 120
     def setRect(self, rect):
         self.rect = rect
     def getRect(self):
@@ -71,7 +71,20 @@ class Ghost(Character):
         elif y - self.y > 0:
             return Enums.Direction.Down
         else:
-            return None
+            return Enums.Direction.Left
+    def getDirectionOppositePacman(self, pacmanCoords):
+        x,y = pacmanCoords
+        if self.x - x > 0:
+            return Enums.Direction.Right
+        elif x - self.x > 0:
+            return Enums.Direction.Left
+        elif self.y - y > 0:
+            return Enums.Direction.Down
+        elif y - self.y > 0:
+            return Enums.Direction.Up
+        else:
+            return Enums.Direction.Left
+
     def moveInDirection(self, direction, walls, teleports):
         move = Move.initWithDirection(Enums.Direction(direction))
         if self.canMove(move, pygame.Rect((self.x, self.y), (18,18)), walls):

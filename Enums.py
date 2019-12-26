@@ -9,7 +9,7 @@ class MapElement(Enum):
     Coin = '1'
     Passage = '2'
     Scare = '3'
-    Fruit = 4
+    Fruit = '4'
     Teleport = '6'
     Door = '7'
     GhostRed = 'A'
