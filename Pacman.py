@@ -127,7 +127,7 @@ class Pacman(Character):
             if scare.colliderect(actualRect):
                 scares.remove(scare)
                 self.pacmanState = Enums.PacmanState.OnSteroids
-                self.movesToNormal = 700
+                self.movesToNormal = 400
         return
 
     def checkForGhosts(self, ghosts):
